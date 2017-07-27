@@ -12,6 +12,7 @@
  <script src="/js/deleteHandler.js"></script>
  */
 
+
 (function() {
 
   var laravel = {

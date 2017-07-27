@@ -6,10 +6,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="{!! config("ayarlar.description") !!}">
+    <meta name="author" content="{!! config("ayarlar.author") !!}">
+    <meta name="keywords" content="{!! config("ayarlar.keywords") !!}">
 
-    <title>Clean Blog</title>
+    <title>{!! config("ayarlar.baslik") !!}</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="{{asset("vendor/bootstrap/css/bootstrap.min.css")}}" rel="stylesheet">
@@ -37,10 +38,12 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    <script>
+        window.csrfToken = "{{ csrf_token() }}"
+    </script>
 </head>
 
-<body>
+<body data-status="{{Session::get('durum')}}">
 
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
@@ -89,7 +92,7 @@
                 <span class="sr-only">Toggle navigation</span>
                 Menu <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+            <a class="navbar-brand" href="/">{!! config("ayarlar.baslik") !!}</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -125,7 +128,7 @@
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <ul class="list-inline text-center">
                     <li>
-                        <a href="#">
+                        <a href="{!! config("ayarlar.twitter") !!}">
                                 <span class="fa-stack fa-lg">
                                     <i class="fa fa-circle fa-stack-2x"></i>
                                     <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
@@ -133,7 +136,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{!! config("ayarlar.facebook") !!}">
                                 <span class="fa-stack fa-lg">
                                     <i class="fa fa-circle fa-stack-2x"></i>
                                     <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
@@ -141,7 +144,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{!! config("ayarlar.github") !!}">
                                 <span class="fa-stack fa-lg">
                                     <i class="fa fa-circle fa-stack-2x"></i>
                                     <i class="fa fa-github fa-stack-1x fa-inverse"></i>
@@ -149,7 +152,7 @@
                         </a>
                     </li>
                 </ul>
-                <p class="copyright text-muted">Copyright &copy; Your Website 2016</p>
+                <p class="copyright text-muted">Copyright &copy; {!! config("ayarlar.author") !!}</p>
             </div>
         </div>
     </div>
