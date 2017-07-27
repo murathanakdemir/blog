@@ -112,6 +112,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         User::destroy($id);
+        DB::table('role_user')->where('user_id',$id)->delete();
         Session::flash('durum',1);
         return redirect('/user');
     }

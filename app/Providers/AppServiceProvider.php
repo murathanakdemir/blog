@@ -25,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app['form']->component('bsSubmit', 'components.submit', ['name', 'url' => URL::previous()]);
         $this->app['form']->component('bsCheckbox', 'components.checkbox', ['name', 'label_name', 'elemanlar' =>[]]);
         $this->app['form']->component('bsPassword', 'components.password', ['name', 'label_name']);
+        $this->app['form']->component('bsFile', 'components.file', ['name', 'label_name']);
     }
 
     /**
