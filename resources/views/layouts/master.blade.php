@@ -70,8 +70,8 @@
                             <li class="divider"></li>
                             @endif
                             @if(Auth::user()->yetkisi_var_mi("author"))
-                            <li><a href="{{url('/makalem')}}"><i class="fa fa-btn fa-list"></i>Makalelerim</a></li>
-                            <li><a href="{{url('/makalem/create')}}"><i class="fa fa-btn fa-plus"></i>Yeni Makale Ekle</a></li>
+                            <li><a href="{{url('/makalelerim')}}"><i class="fa fa-btn fa-list"></i>Makalelerim</a></li>
+                            <li><a href="{{url('/makalelerim/create')}}"><i class="fa fa-btn fa-plus"></i>Yeni Makale Ekle</a></li>
                             @endif
                             @if(!Auth::user()->yetkisi_var_mi("admin") && !Auth::user()->yetkisi_var_mi("author"))
                             <li><a href="{{url('/yazarlik-talebi')}}"><i class="fa fa-btn fa-list"></i>Yazarlık Talebi</a></li>

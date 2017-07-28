@@ -1,16 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Yazar;
 
 use App\Http\Controllers\Controller;
 use App\Kategori;
+use App\Makale;
 use App\Resim;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Intervention\Image\Facades\Image;
 
-
-class KategoriController extends Controller
+class MakaleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,8 +21,8 @@ class KategoriController extends Controller
      */
     public function index()
     {
-        $kategoriler=Kategori::paginate(10);
-        return view('admin.kategori-index',compact('kategoriler'));
+        $makaleler=Makale::where('user_id',Auth::user()->id)->paginate(10);
+        return view('yazar.makale-index',compact('makaleler'));
     }
 
     /**
@@ -30,7 +32,8 @@ class KategoriController extends Controller
      */
     public function create()
     {
-        return view('admin.kategori-create');
+        $kategoriler=Kategori::pluck('baslik','id')->all();
+        return view('yazar.makale-create',compact('kategoriler'));
     }
 
     /**
@@ -42,34 +45,36 @@ class KategoriController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'baslik'=>'required|max:150',
-            'resim'=>'required'
+            'baslik'=> 'required|max:150',
+            'icerik'=> 'required',
+            'resim'=> 'required',
+            'kategori_id'=> 'required'
         ]);
-        $input=$request->all();
 
-        //slug_tr
+        $input=$request->all();
+        $input['user_id']=Auth::user()->id;
+        $input['durum']=0;
         $tr = array("ş", "Ş", "ı", "(", ")", "‘", "ü", "Ü", "ö", "Ö", "ç", "Ç", " ", "/", "*", "?", "ş", "Ş", "ı", "ğ", "Ğ", "İ", "ö", "Ö", "Ç", "ç", "ü", "Ü");
         $eng = array("s", "s", "i", "", "", "", "u", "u", "o", "o", "c", "c", "-", "-", "-", "", "s", "s", "i", "g", "g", "i", "o", "o", "c", "c", "u", "u");
         $slug_tr = str_replace($tr, $eng, $request->baslik);
         $input['slug']=strtolower($slug_tr);
-        //!slug_tr
 
-        $kategori=Kategori::create($input);
+        $makale=Makale::create($input);
         if($resim=$request->file('resim')){
             $resim_isim=time().'.'.$resim->getClientOriginalExtension();
             $thumb='thumb_'.time().'.'.$resim->getClientOriginalExtension();
-
             Image::make($resim->getRealPath())->fit(1900,872)->fill([0,0,0,0.5])->save(public_path('uploads/'.$resim_isim));
             Image::make($resim->getRealPath())->fit(600,400)->save(public_path('uploads/'.$thumb));
             $input=[];
             $input['isim']=$resim_isim;
-            $input['imageable_id']=$kategori->id;
-            $input['imageable_type']='App\Kategori';
+            $input['imageable_id']=$makale->id;
+            $input['imageable_type']='App\Makale';
 
             Resim::create($input);
         }
         Session::flash('durum',1);
-        return redirect('/kategori');
+        return redirect('/makalelerim');
+
     }
 
     /**
@@ -91,8 +96,9 @@ class KategoriController extends Controller
      */
     public function edit($id)
     {
-        $kategori=Kategori::find($id);
-        return view('admin.kategori-edit',compact('kategori'));
+        $makale=Makale::find($id);
+        $kategoriler=Kategori::pluck('baslik','id')->all();
+        return view('yazar.makale-edit',compact('makale','kategoriler'));
     }
 
     /**
@@ -105,21 +111,26 @@ class KategoriController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,[
-            'baslik'=>'required|max:150'
+            'baslik'=> 'required|max:150',
+            'icerik'=> 'required',
+            'kategori_id'=> 'required'
         ]);
-        $kategori=Kategori::find($id);
-        $kategori->update($request->all());
-        if($resim=$request->file('resim')){
-            $resim_isim=$kategori->resim->isim;
-            $thumb='thumb_'.$kategori->resim->isim;
 
+        $input=$request->all();
+        $tr = array("ş", "Ş", "ı", "(", ")", "‘", "ü", "Ü", "ö", "Ö", "ç", "Ç", " ", "/", "*", "?", "ş", "Ş", "ı", "ğ", "Ğ", "İ", "ö", "Ö", "Ç", "ç", "ü", "Ü");
+        $eng = array("s", "s", "i", "", "", "", "u", "u", "o", "o", "c", "c", "-", "-", "-", "", "s", "s", "i", "g", "g", "i", "o", "o", "c", "c", "u", "u");
+        $slug_tr = str_replace($tr, $eng, $request->baslik);
+        $input['slug']=strtolower($slug_tr);
+        $makale=Makale::find($id);
+        $makale->update($input);
+        if($resim=$request->file('resim')){
+            $resim_isim=$makale->resim->isim;
+            $thumb='thumb_'.$makale->resim->isim;
             Image::make($resim->getRealPath())->fit(1900,872)->fill([0,0,0,0.5])->save(public_path('uploads/'.$resim_isim));
             Image::make($resim->getRealPath())->fit(600,400)->save(public_path('uploads/'.$thumb));
-
         }
-
         Session::flash('durum',1);
-        return redirect('/kategori');
+        return redirect('/makalelerim');
     }
 
     /**
@@ -130,13 +141,14 @@ class KategoriController extends Controller
      */
     public function destroy($id)
     {
-        $resim=Kategori::find($id)->resim->isim;
+        $resim=Makale::find($id)->resim->isim;
         unlink(public_path("uploads/".$resim));
         unlink(public_path("uploads/thumb_".$resim));
 
-        Resim::where('imageable_id',$id)->where('imageable_type','App\Kategori')->delete();
-        Kategori::destroy($id);
+        Resim::where('imageable_id',$id)->where('imageable_type','App\Makale')->delete();
+        Makale::destroy($id);
         Session::flash('durum',1);
         return redirect()->back();
     }
+
 }

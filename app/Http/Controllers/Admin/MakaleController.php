@@ -57,7 +57,7 @@ class MakaleController extends Controller
         $tr = array("ş", "Ş", "ı", "(", ")", "‘", "ü", "Ü", "ö", "Ö", "ç", "Ç", " ", "/", "*", "?", "ş", "Ş", "ı", "ğ", "Ğ", "İ", "ö", "Ö", "Ç", "ç", "ü", "Ü");
         $eng = array("s", "s", "i", "", "", "", "u", "u", "o", "o", "c", "c", "-", "-", "-", "", "s", "s", "i", "g", "g", "i", "o", "o", "c", "c", "u", "u");
         $slug_tr = str_replace($tr, $eng, $request->baslik);
-        $input['slug']=str_slug($slug_tr);
+        $input['slug']=strtolower($slug_tr);
 
         $makale=Makale::create($input);
         if($resim=$request->file('resim')){
@@ -120,7 +120,7 @@ class MakaleController extends Controller
         $tr = array("ş", "Ş", "ı", "(", ")", "‘", "ü", "Ü", "ö", "Ö", "ç", "Ç", " ", "/", "*", "?", "ş", "Ş", "ı", "ğ", "Ğ", "İ", "ö", "Ö", "Ç", "ç", "ü", "Ü");
         $eng = array("s", "s", "i", "", "", "", "u", "u", "o", "o", "c", "c", "-", "-", "-", "", "s", "s", "i", "g", "g", "i", "o", "o", "c", "c", "u", "u");
         $slug_tr = str_replace($tr, $eng, $request->baslik);
-        $input['slug']=str_slug($slug_tr);
+        $input['slug']=strtolower($slug_tr);
         $makale=Makale::find($id);
         $makale->update($input);
         if($resim=$request->file('resim')){

@@ -29,7 +29,7 @@
                         <th>Slug</th>
                         <th>Kategori</th>
                         <th>Yazar</th>
-                        <th>Yayınlanma Tarihi</th>
+                        <th>Yayınlanma</th>
                         <th>Eylem</th>
                     </tr>
                     </thead>
