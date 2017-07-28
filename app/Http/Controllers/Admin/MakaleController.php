@@ -53,7 +53,11 @@ class MakaleController extends Controller
 
         $input=$request->all();
         $input['user_id']=Auth::user()->id;
-        $input['durum']=0;
+        if(Auth::user()->yetkisi_var_mi('admin')){
+            $input['durum']=1;
+        }else{
+            $input['durum']=0;
+        }
         $tr = array("ş", "Ş", "ı", "(", ")", "‘", "ü", "Ü", "ö", "Ö", "ç", "Ç", " ", "/", "*", "?", "ş", "Ş", "ı", "ğ", "Ğ", "İ", "ö", "Ö", "Ç", "ç", "ü", "Ü");
         $eng = array("s", "s", "i", "", "", "", "u", "u", "o", "o", "c", "c", "-", "-", "-", "", "s", "s", "i", "g", "g", "i", "o", "o", "c", "c", "u", "u");
         $slug_tr = str_replace($tr, $eng, $request->baslik);
