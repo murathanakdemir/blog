@@ -18,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-        setlocale(LC_TIME,"tr_TR");
+        setlocale (LC_TIME, "turkish");
         Carbon::setLocale("tr");
         config()->set("ayarlar",Ayar::pluck("value","name")->all());
         $this->app['form']->component('bsText', 'components.text', ['name', 'label_name','value' => null]);

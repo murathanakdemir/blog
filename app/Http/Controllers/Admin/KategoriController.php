@@ -19,7 +19,7 @@ class KategoriController extends Controller
      */
     public function index()
     {
-        $kategoriler=Kategori::paginate(10);
+        $kategoriler=Kategori::orderBy('created_at','desc')->paginate(10);
         return view('admin.kategori-index',compact('kategoriler'));
     }
 
@@ -56,8 +56,9 @@ class KategoriController extends Controller
 
         $kategori=Kategori::create($input);
         if($resim=$request->file('resim')){
-            $resim_isim=time().'.'.$resim->getClientOriginalExtension();
-            $thumb='thumb_'.time().'.'.$resim->getClientOriginalExtension();
+            $time=time();
+            $resim_isim=$time.'.'.$resim->getClientOriginalExtension();
+            $thumb='thumb_'.$time.'.'.$resim->getClientOriginalExtension();
 
             Image::make($resim->getRealPath())->fit(1900,872)->fill([0,0,0,0.5])->save(public_path('uploads/'.$resim_isim));
             Image::make($resim->getRealPath())->fit(600,400)->save(public_path('uploads/'.$thumb));
@@ -131,8 +132,8 @@ class KategoriController extends Controller
     public function destroy($id)
     {
         $resim=Kategori::find($id)->resim->isim;
-        unlink(public_path("uploads/".$resim));
-        unlink(public_path("uploads/thumb_".$resim));
+        @unlink(public_path("uploads/".$resim));
+        @unlink(public_path("uploads/thumb_".$resim));
 
         Resim::where('imageable_id',$id)->where('imageable_type','App\Kategori')->delete();
         Kategori::destroy($id);

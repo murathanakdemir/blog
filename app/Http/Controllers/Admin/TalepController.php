@@ -16,7 +16,7 @@ class TalepController extends Controller
      */
     public function index()
     {
-        $talepler=Talep::orderBy('created_at','desc')->paginate(10);
+        $talepler=Talep::orderBy('updated_at','desc')->paginate(10);
         return view('admin.talep-index',compact('talepler'));
     }
 
